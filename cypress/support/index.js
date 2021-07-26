@@ -18,3 +18,10 @@ import './commands'
 
 // Alternatively you can use CommonJS syntax:
 // require('./commands')
+''
+before(() => {
+    // cy.server - é necessário para se utilizar com route e request
+    cy.server();
+    // Comando constumizado criado no commands 
+    cy.createOng();
+})
