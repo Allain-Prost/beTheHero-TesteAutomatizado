@@ -1,8 +1,10 @@
+/// <reference types="Cypress" />
+
 
 describe('Ongs', () => {
 
     
-    it('devem poder realizar um cadastro', () => {
+    it.skip('devem poder realizar um cadastro', () => {
         cy.visit('http://localhost:3000/register')
         // cy.get - busca um elemento
         // .type - insete um texto 
@@ -31,15 +33,50 @@ describe('Ongs', () => {
         })
     });
 
-    it('deve poder realizar um login no sistema', () => {
+    it.skip('deve poder realizar um login no sistema', () => {
 
         // O cypress não recomenda a utilização de const ou let
         // const createOngId = Cypress.env('createdOngId');
 
-        //cy.log(createOngId);
+        // cy.log(createOngId);
 
         cy.visit('http://localhost:3000/');
         cy.get('input').type(Cypress.env('createdOngId'));
         cy.get('.button').click();
     });
+
+    it.skip('deve poder realizar um logout', () => {
+
+        cy.login();
+        cy.get('button').click();
+
+    });
+
+    it('devem poder cadastrar novos casos', () => {
+        cy.login();
+
+        cy.get('.button').click();
+
+        cy.get('[placeholder="Título do caso"]').type('Animal doente');
+        cy.get('textarea').type('Animal precisa de apoio');
+        cy.get('[placeholder="Valor em reais"]').type(300);
+
+        cy.route('POST', '**/incidents').as('newIncident');
+
+        cy.get('.button').click();
+
+        cy.wait('@newIncident').then((xhr) => {
+            expect(xhr.status).to.eq(200);
+            expect(xhr.response.body).has.property('id');
+            expect(xhr.response.body.id).is.not.null;
+
+        })
+    });
+
+    it('deve poder excluir um caso', () => {
+
+    });
+
 });
+
+// ee94928d

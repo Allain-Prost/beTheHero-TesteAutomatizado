@@ -43,3 +43,12 @@ Cypress.Commands.add("createOng", () => {
         Cypress.env('createdOngId', response.body.id);
     })
 });
+
+Cypress.Commands.add('login', () => {
+    cy.visit('http://localhost:3000/profile', {
+        onBeforeLoad: (browser) => {
+            browser.localStorage.setItem('ongId', Cypress.env('createdOngId'));
+            browser.localStorage.setItem('ongName', 'Teste');
+        }
+    });
+})
