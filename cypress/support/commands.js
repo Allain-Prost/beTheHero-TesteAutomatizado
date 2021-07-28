@@ -28,7 +28,7 @@ Cypress.Commands.add("createOng", () => {
 
     cy.request({
         method: 'POST',
-        url: ' http://localhost:3333/ongs',
+        url: 'http://localhost:3333/ongs',
         body: {
             city: "Patos ",
             email: "testando@gmail.com",
@@ -42,6 +42,24 @@ Cypress.Commands.add("createOng", () => {
 
         Cypress.env('createdOngId', response.body.id);
     })
+});
+
+Cypress.Commands.add('createdNewIncident', () => {
+    cy.request({
+        method:'POST',
+        url: 'http://localhost:3333/incidents',
+        headers: { 'Authorization': `${Cypress.env('createdOngId')}`, },
+        body: {
+            title: "Animal Abandonado 2",
+            description: "Animal precisa de apoio para ter uma moradia",
+            value: "300"
+        }
+    }).then(response => {
+        expect(response.body.id).is.not.null;
+        cy.log(response.body.id);
+
+        Cypress.env('createdIncidentId', response.body.id);
+    });
 });
 
 Cypress.Commands.add('login', () => {

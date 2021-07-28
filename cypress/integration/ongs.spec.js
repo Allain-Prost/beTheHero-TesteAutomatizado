@@ -4,7 +4,7 @@
 describe('Ongs', () => {
 
     
-    it.skip('devem poder realizar um cadastro', () => {
+    it('devem poder realizar um cadastro', () => {
         cy.visit('http://localhost:3000/register')
         // cy.get - busca um elemento
         // .type - insete um texto 
@@ -33,7 +33,7 @@ describe('Ongs', () => {
         })
     });
 
-    it.skip('deve poder realizar um login no sistema', () => {
+    it('deve poder realizar um login no sistema', () => {
 
         // O cypress não recomenda a utilização de const ou let
         // const createOngId = Cypress.env('createdOngId');
@@ -41,29 +41,27 @@ describe('Ongs', () => {
         // cy.log(createOngId);
 
         cy.visit('http://localhost:3000/');
-        cy.get('input').type(Cypress.env('createdOngId'));
-        cy.get('.button').click();
+        cy.get('[data-cy=id]').type(Cypress.env('createdOngId'));
+        cy.get('[data-cy=button-login]').click();
     });
 
-    it.skip('deve poder realizar um logout', () => {
-
+    it('deve poder realizar um logout', () => {
         cy.login();
-        cy.get('button').click();
-
+        cy.get('[data-cy=button-logout]').click();
     });
 
     it('devem poder cadastrar novos casos', () => {
         cy.login();
 
-        cy.get('.button').click();
+        cy.get('[data-cy=button-new-incident]').click();
 
-        cy.get('[placeholder="Título do caso"]').type('Animal doente');
-        cy.get('textarea').type('Animal precisa de apoio');
-        cy.get('[placeholder="Valor em reais"]').type(300);
+        cy.get('[data-cy=title]').type('Animal doente');
+        cy.get('[data-cy=description]').type('Animal precisa de apoio');
+        cy.get('[data-cy=value]').type(300);
 
         cy.route('POST', '**/incidents').as('newIncident');
 
-        cy.get('.button').click();
+        cy.get('[data-cy="button-save"]').click();
 
         cy.wait('@newIncident').then((xhr) => {
             expect(xhr.status).to.eq(200);
@@ -74,8 +72,22 @@ describe('Ongs', () => {
     });
 
     it('deve poder excluir um caso', () => {
+        cy.createdNewIncident();
+        cy.login();
 
+        // Delete 204
+        // http://localhost:3333/incidents/41
+        cy.route('DELETE', '**/incidents/*').as('deleteIncident');
+
+        cy.get('[data-cy=button-delete]').click();
+
+        cy.wait('@deleteIncident').then((xhr) => {
+            expect(xhr.status).to.eq(204);
+            // Por ser uma requisção de DELETE não vamos esperar por nada 
+            expect(xhr.response.body).to.be.empty;
+        })
     });
+
 
 });
 
